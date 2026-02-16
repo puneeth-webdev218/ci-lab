@@ -3,8 +3,6 @@ name: Weather App Production Check
 on:
   push:
     branches: [ main ]
-  pull_request:
-    branches: [ main ]
 
 jobs:
   build-and-test:
@@ -15,21 +13,17 @@ jobs:
         node-version: [18.x, 20.x]
 
     steps:
-      - name: Checkout Code
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
-      - name: Use Node.js ${{ matrix.node-version }}
-        uses: actions/setup-node@v4
+      - uses: actions/setup-node@v4
         with:
           node-version: ${{ matrix.node-version }}
 
-      - name: Install Dependencies
-        run: npm install
+      - run: npm install
 
-      - name: Run Unit Tests
-        run: node test.js
+      - run: node test.js
 
-      - name: Run Security Check
+      - name: Run app with secret
         run: node app.js
         env:
           WEATHER_API_KEY: ${{ secrets.WEATHER_API_KEY }}
@@ -41,11 +35,10 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Create Build Artifact
-        run: zip -r weather-app-dist.zip . -x "*.git*"
+      - run: zip -r weather-app-dist.zip . -x "*.git*"
 
-      - name: Upload Artifact
-        uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v4
         with:
           name: weather-app-dist
           path: weather-app-dist.zip
+
